@@ -92,6 +92,32 @@
       padding: 3rem 1.5rem 4rem;
     }
 
+    /* ── Security notice ─────────────────────────────────── */
+    .security-notice {
+      background: rgba(251,191,36,0.06);
+      border: 1px solid rgba(251,191,36,0.2);
+      border-radius: 0.75rem;
+      padding: 1.1rem 1.4rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 0.85rem;
+      align-items: flex-start;
+    }
+    .security-notice-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .security-notice-text {
+      font-size: 0.92rem;
+      color: var(--gold-dim);
+      line-height: 1.7;
+    }
+    .security-notice-text strong {
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
     /* ── Lookup panel ────────────────────────────────────── */
     .lookup-panel {
       background: var(--dark-glass);
@@ -112,69 +138,107 @@
       display: block;
     }
 
-    .code-input-row {
+    /* ── Split code input ────────────────────────────────── */
+    .split-code-row {
       display: flex;
-      gap: 0.75rem;
-      align-items: stretch;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
     }
 
-    .code-input {
+    .code-half {
       flex: 1;
-      padding: 1rem 1.25rem;
+      padding: 1rem 0.75rem;
       background: rgba(15,23,42,0.7);
       border: 1.5px solid var(--border-gold);
       border-radius: 0.6rem;
       color: white;
       font-family: 'Cinzel', serif;
-      font-size: 1.4rem;
-      letter-spacing: 0.25em;
+      font-size: 1.5rem;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
       text-align: center;
       transition: border-color 0.2s, box-shadow 0.2s;
+      width: 0; /* flex will size it */
     }
-    .code-input::placeholder {
-      color: rgba(253,230,138,0.3);
+    .code-half::placeholder {
+      color: rgba(253,230,138,0.25);
       letter-spacing: 0.15em;
       font-size: 1.1rem;
     }
-    .code-input:focus {
+    .code-half:focus {
       outline: none;
       border-color: var(--gold);
       box-shadow: 0 0 20px rgba(251,191,36,0.2);
     }
+    .code-half.part2:focus {
+      border-color: var(--purple-soft);
+      box-shadow: 0 0 20px rgba(168,85,247,0.2);
+    }
+
+    .code-separator {
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem;
+      color: rgba(251,191,36,0.4);
+      flex-shrink: 0;
+      line-height: 1;
+      padding-bottom: 0.1rem;
+    }
 
     .verify-btn {
+      width: 100%;
+      margin-top: 0.75rem;
       padding: 1rem 1.75rem;
       background: linear-gradient(90deg, var(--purple-ui), #f59e0b);
       border: none;
       border-radius: 0.6rem;
       color: white;
       font-family: 'Cinzel', serif;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       font-weight: 600;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
       cursor: pointer;
       transition: opacity 0.2s, transform 0.15s;
-      white-space: nowrap;
     }
     .verify-btn:hover  { opacity: 0.9; transform: translateY(-1px); }
     .verify-btn:active { transform: translateY(0); }
     .verify-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
+    /* ── Code labels ─────────────────────────────────────── */
+    .code-labels {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+    .code-label {
+      flex: 1;
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 0 0.75rem;
+    }
+    .code-label.part1 { color: var(--gold-dim); }
+    .code-label.part2 { color: var(--purple-pale); }
+    .code-label-sep { width: 1.5rem; flex-shrink: 0; }
+
     .hint-text {
       margin-top: 0.85rem;
-      color: rgba(196,181,253,0.55);
-      font-size: 0.9rem;
+      color: rgba(196,181,253,0.45);
+      font-size: 0.88rem;
       font-style: italic;
-      line-height: 1.5;
+      line-height: 1.6;
+      text-align: center;
     }
 
     /* ── Loading ─────────────────────────────────────────── */
     .loading-row {
       display: none;
       align-items: center;
+      justify-content: center;
       gap: 0.85rem;
-      margin-top: 1.5rem;
+      margin-top: 1.25rem;
       color: var(--gold-dim);
       font-style: italic;
       font-size: 1rem;
@@ -283,7 +347,7 @@
       margin: 1.25rem 0;
     }
 
-    /* ── Signature photo — optional ──────────────────────── */
+    /* ── Signature photo ─────────────────────────────────── */
     .sig-section { margin-top: 0.25rem; }
     .sig-label {
       font-family: 'Cinzel', serif;
@@ -343,24 +407,56 @@
 
   <div class="container">
 
+    <!-- Security notice -->
+    <div class="security-notice">
+      <div class="security-notice-icon">🔑</div>
+      <div class="security-notice-text">
+        <strong>How Authentication Works</strong>
+        The first four characters appear on your physical print — visible to anyone.
+        The second four characters appear only on your Certificate of Authenticity.
+        Only the true owner can produce both.
+      </div>
+    </div>
+
     <!-- Lookup panel -->
     <div class="lookup-panel">
-      <label class="lookup-label" for="certInput">Enter Certificate Code</label>
-      <div class="code-input-row">
+      <label class="lookup-label">Enter Your Full Certificate Code</label>
+
+      <!-- Labels above inputs -->
+      <div class="code-labels">
+        <div class="code-label part1">On your print</div>
+        <div class="code-label-sep"></div>
+        <div class="code-label part2">On your certificate</div>
+      </div>
+
+      <!-- Split input -->
+      <div class="split-code-row">
         <input
           type="text"
-          id="certInput"
-          class="code-input"
+          id="codePart1"
+          class="code-half part1"
           placeholder="XXXX"
           maxlength="4"
           autocomplete="off"
           spellcheck="false"
         />
-        <button class="verify-btn" id="verifyBtn" onclick="runVerification()">Verify</button>
+        <div class="code-separator">—</div>
+        <input
+          type="text"
+          id="codePart2"
+          class="code-half part2"
+          placeholder="XXXX"
+          maxlength="4"
+          autocomplete="off"
+          spellcheck="false"
+        />
       </div>
+
+      <button class="verify-btn" id="verifyBtn" onclick="runVerification()">Verify Authenticity</button>
+
       <p class="hint-text">
-        Enter the four-character code printed on your print.<br>
-        This code is unique to your specific print and cannot be transferred.
+        Enter the code exactly as it appears on both documents.<br>
+        Letters and numbers only — no spaces required.
       </p>
 
       <div class="loading-row" id="loadingRow">
@@ -418,7 +514,6 @@
           </div>
         </div>
 
-        <!-- Signature photo — shown only if URL is populated in the sheet -->
         <div id="sig-section" style="display:none;">
           <div class="divider"></div>
           <div class="sig-section">
@@ -448,7 +543,7 @@
       </div>
       <div class="result-body">
         <p style="color:var(--purple-pale); font-size:0.95rem; line-height:1.8;">
-          The code you entered was not found in the PfP Cards registry. Please check the code on your print and try again. If you believe this is an error, contact the issuer directly.
+          The code you entered was not found in the PfP Cards registry. Please check both parts of the code carefully and try again. If you believe this is an error, contact the issuer directly.
         </p>
       </div>
     </div>
@@ -501,7 +596,7 @@
       </div>
     </div>
 
-    <!-- ── INVALID FORMAT / ERROR ─────────────────────────── -->
+    <!-- ── ERROR ──────────────────────────────────────────── -->
     <div class="result-panel result-warning" id="panel-error">
       <div class="result-header">
         <div class="result-icon">💬</div>
@@ -512,7 +607,7 @@
       </div>
       <div class="result-body">
         <p style="color:var(--gold-dim); font-size:0.95rem; line-height:1.8;" id="error-body">
-          The code on your print should be four characters — letters and numbers only (e.g. 6C3Q).
+          Both parts of the code should be four characters each — letters and numbers only (e.g. YCLB — NZCZ).
         </p>
       </div>
     </div>
@@ -526,7 +621,6 @@
 
   <script>
     // ── CONFIG ────────────────────────────────────────────────────────────
-    // Replace with your deployed Apps Script web app URL
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyq1AQ85ctZyKWXflBEX2r7mxTdyBxJOYXSlNcDgLGotqu28buVV4YHfBmO1MOvGDc/exec";
     // ─────────────────────────────────────────────────────────────────────
 
@@ -551,7 +645,7 @@
       hideAllPanels();
       const el = document.getElementById(id);
       el.style.display = "block";
-      void el.offsetWidth; // force reflow so animation replays
+      void el.offsetWidth;
       el.classList.add("visible");
     }
 
@@ -577,11 +671,10 @@
       document.getElementById("v-value").textContent       = formatValue(data.printValue);
       document.getElementById("v-date").textContent        = data.dateIssued     || "—";
 
-      // Signature photo — only shown when a URL is on record
       const sigSection = document.getElementById("sig-section");
       const sigImg     = document.getElementById("v-sig-img");
       if (data.signaturePhotoUrl && data.signaturePhotoUrl.trim() !== "") {
-        sigImg.src             = data.signaturePhotoUrl;
+        sigImg.src = data.signaturePhotoUrl;
         sigSection.style.display = "block";
       } else {
         sigSection.style.display = "none";
@@ -589,16 +682,34 @@
     }
 
     async function runVerification() {
-      const input = document.getElementById("certInput");
-      const raw   = input.value.trim().toUpperCase();
+      const part1 = document.getElementById("codePart1").value.trim().toUpperCase();
+      const part2 = document.getElementById("codePart2").value.trim().toUpperCase();
 
-      if (!raw) { input.focus(); return; }
+      // Validate both fields filled
+      if (!part1 || !part2) {
+        document.getElementById("error-title").textContent    = "Incomplete Code";
+        document.getElementById("error-subtitle").textContent = "Both parts are required";
+        document.getElementById("error-body").textContent     = "Please enter the four-character code from your print, and the four-character code from your Certificate of Authenticity.";
+        showPanel("panel-error");
+        return;
+      }
+
+      // Validate format
+      if (!/^[A-Z0-9]{4}$/.test(part1) || !/^[A-Z0-9]{4}$/.test(part2)) {
+        document.getElementById("error-title").textContent    = "Invalid Code Format";
+        document.getElementById("error-subtitle").textContent = "Codes must be four characters each";
+        document.getElementById("error-body").textContent     = "Each part should be exactly four letters or numbers (e.g. YCLB — NZCZ).";
+        showPanel("panel-error");
+        return;
+      }
+
+      const fullCode = `${part1}-${part2}`;
 
       hideAllPanels();
       setLoading(true);
 
       try {
-        const url      = `${APPS_SCRIPT_URL}?action=verifyCert&code=${encodeURIComponent(raw)}`;
+        const url      = `${APPS_SCRIPT_URL}?action=verifyCert&code=${encodeURIComponent(fullCode)}`;
         const response = await fetch(url);
         const data     = await response.json();
 
@@ -624,7 +735,7 @@
           case "INVALID_FORMAT":
             document.getElementById("error-title").textContent    = "Invalid Code Format";
             document.getElementById("error-subtitle").textContent = "Please check your entry";
-            document.getElementById("error-body").textContent     = data.message || "The code on your print should be four characters (e.g. 6C3Q).";
+            document.getElementById("error-body").textContent     = data.message || "Each part should be four characters (e.g. YCLB — NZCZ).";
             showPanel("panel-error");
             break;
           case "SYSTEM_ERROR":
@@ -647,14 +758,24 @@
       }
     }
 
-    // Enter key triggers verification
-    document.getElementById("certInput").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") runVerification();
+    // Auto-advance from part1 to part2 when 4 chars entered
+    document.getElementById("codePart1").addEventListener("input", function(e) {
+      e.target.value = e.target.value.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 4);
+      if (e.target.value.length === 4) {
+        document.getElementById("codePart2").focus();
+      }
     });
 
-    // Strip non-alphanumeric and force uppercase as you type
-    document.getElementById("certInput").addEventListener("input", function(e) {
+    document.getElementById("codePart2").addEventListener("input", function(e) {
       e.target.value = e.target.value.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 4);
+    });
+
+    // Enter key on either field triggers verification
+    document.getElementById("codePart1").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") runVerification();
+    });
+    document.getElementById("codePart2").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") runVerification();
     });
   </script>
 </body>
