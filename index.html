@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PfP Cards — Certificate Verification</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --gold:          #fbbf24;
+      --gold-light:    #fcd34d;
+      --gold-dim:      #fde68a;
+      --purple-deep:   #1e293b;
+      --purple-mid:    #581c87;
+      --purple-ui:     #6d28d9;
+      --purple-soft:   #a855f7;
+      --purple-pale:   #c4b5fd;
+      --dark-glass:    rgba(15, 23, 42, 0.6);
+      --border-gold:   rgba(251, 191, 36, 0.35);
+      --border-purple: rgba(168, 85, 247, 0.3);
+    }
+
+    body {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      background: linear-gradient(135deg, #1e293b 0%, #581c87 50%, #1e293b 100%);
+      color: white;
+      min-height: 100vh;
+    }
+
+    /* ── Header ──────────────────────────────────────────── */
+    .header {
+      position: relative;
+      background: linear-gradient(90deg, rgba(109,40,217,0.5), rgba(245,158,11,0.5));
+      border-bottom: 2px solid rgba(251,191,36,0.3);
+      padding: 2.5rem 2rem;
+      box-shadow: 0 10px 30px rgba(109,40,217,0.5);
+      overflow: hidden;
+      text-align: center;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(168,85,247,0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(245,158,11,0.15) 0%, transparent 50%),
+        repeating-linear-gradient(45deg,  rgba(168,85,247,0.03) 0px, rgba(168,85,247,0.03) 2px, transparent 2px, transparent 4px),
+        repeating-linear-gradient(-45deg, rgba(245,158,11,0.03) 0px, rgba(245,158,11,0.03) 2px, transparent 2px, transparent 4px);
+      z-index: 0;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0.25;
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 10 Q60 30 50 50 Q40 30 50 10' fill='%23d4af37' opacity='0.3'/%3E%3Cpath d='M50 50 Q70 60 50 90 Q30 60 50 50' fill='%23d4af37' opacity='0.3'/%3E%3Cpath d='M10 50 Q30 40 50 50 Q30 60 10 50' fill='%23c4b5fd' opacity='0.3'/%3E%3Cpath d='M50 50 Q60 40 90 50 Q60 60 50 50' fill='%23c4b5fd' opacity='0.3'/%3E%3Ccircle cx='50' cy='50' r='8' fill='%23fbbf24' opacity='0.5'/%3E%3C/svg%3E");
+      background-size: 100px 100px;
+      background-repeat: repeat;
+      z-index: 0;
+    }
+    .header > * { position: relative; z-index: 1; }
+
+    .header-seal {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      filter: drop-shadow(0 0 12px rgba(251,191,36,0.6));
+    }
+    .header h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #fcd34d, #fbbf24, #fcd34d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.4rem;
+    }
+    .header-sub {
+      color: #fde68a;
+      font-size: 1.1rem;
+      font-style: italic;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Container ───────────────────────────────────────── */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 4rem;
+    }
+
+    /* ── Lookup panel ────────────────────────────────────── */
+    .lookup-panel {
+      background: var(--dark-glass);
+      border: 1px solid var(--border-purple);
+      border-radius: 1rem;
+      padding: 2.5rem 2rem;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(8px);
+    }
+
+    .lookup-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      color: var(--purple-pale);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .code-input-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: stretch;
+    }
+
+    .code-input {
+      flex: 1;
+      padding: 1rem 1.25rem;
+      background: rgba(15,23,42,0.7);
+      border: 1.5px solid var(--border-gold);
+      border-radius: 0.6rem;
+      color: white;
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      text-align: center;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .code-input::placeholder {
+      color: rgba(253,230,138,0.3);
+      letter-spacing: 0.15em;
+      font-size: 1.1rem;
+    }
+    .code-input:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(251,191,36,0.2);
+    }
+
+    .verify-btn {
+      padding: 1rem 1.75rem;
+      background: linear-gradient(90deg, var(--purple-ui), #f59e0b);
+      border: none;
+      border-radius: 0.6rem;
+      color: white;
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+    .verify-btn:hover  { opacity: 0.9; transform: translateY(-1px); }
+    .verify-btn:active { transform: translateY(0); }
+    .verify-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .hint-text {
+      margin-top: 0.85rem;
+      color: rgba(196,181,253,0.55);
+      font-size: 0.9rem;
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    /* ── Loading ─────────────────────────────────────────── */
+    .loading-row {
+      display: none;
+      align-items: center;
+      gap: 0.85rem;
+      margin-top: 1.5rem;
+      color: var(--gold-dim);
+      font-style: italic;
+      font-size: 1rem;
+    }
+    .loading-row.active { display: flex; }
+    .spinner {
+      width: 22px;
+      height: 22px;
+      border: 2.5px solid rgba(168,85,247,0.3);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Result panels ───────────────────────────────────── */
+    .result-panel {
+      display: none;
+      border-radius: 1rem;
+      overflow: hidden;
+      animation: fadeSlideIn 0.4s ease forwards;
+    }
+    .result-panel.visible { display: block; }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-verified    { border: 2px solid rgba(34,197,94,0.5);   background: linear-gradient(135deg, rgba(15,23,42,0.92), rgba(15,35,20,0.88)); box-shadow: 0 0 40px rgba(34,197,94,0.1); }
+    .result-not-found   { border: 2px solid rgba(251,191,36,0.35); background: rgba(15,23,42,0.88); }
+    .result-revoked     { border: 2px solid rgba(239,68,68,0.55);  background: linear-gradient(135deg, rgba(15,23,42,0.92), rgba(35,10,10,0.88)); box-shadow: 0 0 40px rgba(239,68,68,0.1); }
+    .result-tampered    { border: 2px solid rgba(239,68,68,0.8);   background: linear-gradient(135deg, rgba(15,23,42,0.92), rgba(45,8,8,0.92));   box-shadow: 0 0 50px rgba(239,68,68,0.18); }
+    .result-warning     { border: 2px solid rgba(245,158,11,0.45); background: rgba(15,23,42,0.88); }
+
+    /* ── Result header bar ───────────────────────────────── */
+    .result-header {
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .result-verified  .result-header { background: rgba(34,197,94,0.1);  border-bottom: 1px solid rgba(34,197,94,0.2); }
+    .result-not-found .result-header { background: rgba(251,191,36,0.06); border-bottom: 1px solid rgba(251,191,36,0.15); }
+    .result-revoked   .result-header { background: rgba(239,68,68,0.1);  border-bottom: 1px solid rgba(239,68,68,0.2); }
+    .result-tampered  .result-header { background: rgba(239,68,68,0.16); border-bottom: 1px solid rgba(239,68,68,0.28); }
+    .result-warning   .result-header { background: rgba(245,158,11,0.07); border-bottom: 1px solid rgba(245,158,11,0.18); }
+
+    .result-icon  { font-size: 1.8rem; flex-shrink: 0; }
+    .result-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+    .result-verified  .result-title { color: #4ade80; }
+    .result-not-found .result-title { color: var(--gold-dim); }
+    .result-revoked   .result-title { color: #f87171; }
+    .result-tampered  .result-title { color: #ef4444; }
+    .result-warning   .result-title { color: #fbbf24; }
+
+    .result-subtitle {
+      font-size: 0.92rem;
+      font-style: italic;
+      margin-top: 0.2rem;
+      opacity: 0.7;
+    }
+    .result-verified  .result-subtitle { color: #86efac; }
+    .result-not-found .result-subtitle { color: var(--purple-pale); }
+    .result-revoked   .result-subtitle { color: #fca5a5; }
+    .result-tampered  .result-subtitle { color: #fca5a5; }
+    .result-warning   .result-subtitle { color: var(--gold-dim); }
+
+    /* ── Verified body ───────────────────────────────────── */
+    .result-body { padding: 1.75rem; }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.1rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 480px) { .details-grid { grid-template-columns: 1fr; } }
+
+    .detail-item.full-width { grid-column: 1 / -1; }
+
+    .detail-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--purple-pale);
+      margin-bottom: 0.3rem;
+    }
+    .detail-value {
+      font-size: 1.05rem;
+      color: white;
+      font-weight: 600;
+    }
+    .detail-value.gold { color: var(--gold); }
+
+    .divider {
+      height: 1px;
+      background: var(--border-purple);
+      margin: 1.25rem 0;
+    }
+
+    /* ── Signature photo — optional ──────────────────────── */
+    .sig-section { margin-top: 0.25rem; }
+    .sig-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--purple-pale);
+      margin-bottom: 0.75rem;
+    }
+    .sig-photo {
+      width: 100%;
+      max-width: 320px;
+      border-radius: 0.6rem;
+      border: 1.5px solid var(--border-gold);
+      display: block;
+    }
+
+    /* ── Auth stamp ──────────────────────────────────────── */
+    .auth-stamp {
+      margin-top: 1.5rem;
+      padding: 1rem 1.25rem;
+      border: 1.5px solid rgba(34,197,94,0.3);
+      border-radius: 0.6rem;
+      background: rgba(34,197,94,0.05);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .auth-stamp-icon { font-size: 1.3rem; }
+    .auth-stamp-text {
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.07em;
+      color: #86efac;
+      line-height: 1.6;
+    }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      color: rgba(196,181,253,0.35);
+      font-size: 0.85rem;
+      font-style: italic;
+      line-height: 1.8;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-seal">✦</div>
+    <h1>Certificate Verification</h1>
+    <p class="header-sub">PfP Cards — Authentication Registry</p>
+  </div>
+
+  <div class="container">
+
+    <!-- Lookup panel -->
+    <div class="lookup-panel">
+      <label class="lookup-label" for="certInput">Enter Certificate Code</label>
+      <div class="code-input-row">
+        <input
+          type="text"
+          id="certInput"
+          class="code-input"
+          placeholder="XXXX"
+          maxlength="4"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button class="verify-btn" id="verifyBtn" onclick="runVerification()">Verify</button>
+      </div>
+      <p class="hint-text">
+        Enter the four-character code printed on your print.<br>
+        This code is unique to your specific print and cannot be transferred.
+      </p>
+
+      <div class="loading-row" id="loadingRow">
+        <div class="spinner"></div>
+        <span>Consulting the registry&hellip;</span>
+      </div>
+    </div>
+
+    <!-- ── VERIFIED ───────────────────────────────────────── -->
+    <div class="result-panel result-verified" id="panel-verified">
+      <div class="result-header">
+        <div class="result-icon">✅</div>
+        <div>
+          <div class="result-title">Authenticated</div>
+          <div class="result-subtitle">This print is registered and verified</div>
+        </div>
+      </div>
+      <div class="result-body">
+        <div class="details-grid">
+          <div class="detail-item full-width">
+            <div class="detail-label">Card Name</div>
+            <div class="detail-value gold" id="v-card"></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Artist</div>
+            <div class="detail-value" id="v-artist"></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Artist Type</div>
+            <div class="detail-value" id="v-artist-type"></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Edition Size</div>
+            <div class="detail-value" id="v-edition"></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Edition Number</div>
+            <div class="detail-value" id="v-edition-num"></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Titled</div>
+            <div class="detail-value" id="v-titled"></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Print Condition</div>
+            <div class="detail-value" id="v-condition"></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Certified Value</div>
+            <div class="detail-value gold" id="v-value"></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Date Certified</div>
+            <div class="detail-value" id="v-date"></div>
+          </div>
+        </div>
+
+        <!-- Signature photo — shown only if URL is populated in the sheet -->
+        <div id="sig-section" style="display:none;">
+          <div class="divider"></div>
+          <div class="sig-section">
+            <div class="sig-label">Signature on Record</div>
+            <img class="sig-photo" id="v-sig-img" src="" alt="Artist signature on record" />
+          </div>
+        </div>
+
+        <div class="auth-stamp">
+          <div class="auth-stamp-icon">🔐</div>
+          <div class="auth-stamp-text">
+            Verified by the PfP Cards Authentication Registry<br>
+            This is an original certified print
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── NOT FOUND ──────────────────────────────────────── -->
+    <div class="result-panel result-not-found" id="panel-not-found">
+      <div class="result-header">
+        <div class="result-icon">🔍</div>
+        <div>
+          <div class="result-title">Code Not Recognized</div>
+          <div class="result-subtitle">This code does not appear in the registry</div>
+        </div>
+      </div>
+      <div class="result-body">
+        <p style="color:var(--purple-pale); font-size:0.95rem; line-height:1.8;">
+          The code you entered was not found in the PfP Cards registry. Please check the code on your print and try again. If you believe this is an error, contact the issuer directly.
+        </p>
+      </div>
+    </div>
+
+    <!-- ── NOT CERTIFIED ─────────────────────────────────── -->
+    <div class="result-panel result-warning" id="panel-not-certified">
+      <div class="result-header">
+        <div class="result-icon">⏳</div>
+        <div>
+          <div class="result-title">Certification Pending</div>
+          <div class="result-subtitle">This print is registered but not yet certified</div>
+        </div>
+      </div>
+      <div class="result-body">
+        <p style="color:var(--gold-dim); font-size:0.95rem; line-height:1.8;">
+          This print exists in the registry but its certificate has not yet been issued. Please contact PfP Cards if you believe this is in error.
+        </p>
+      </div>
+    </div>
+
+    <!-- ── REVOKED ────────────────────────────────────────── -->
+    <div class="result-panel result-revoked" id="panel-revoked">
+      <div class="result-header">
+        <div class="result-icon">🚫</div>
+        <div>
+          <div class="result-title">Certificate Revoked</div>
+          <div class="result-subtitle">This certificate is no longer valid</div>
+        </div>
+      </div>
+      <div class="result-body">
+        <p style="color:#fca5a5; font-size:0.95rem; line-height:1.8;">
+          This certificate has been revoked by the issuer and is no longer considered authentic or valid. Do not purchase or trade this print without contacting PfP Cards directly.
+        </p>
+      </div>
+    </div>
+
+    <!-- ── SUSPENDED ──────────────────────────────────────── -->
+    <div class="result-panel result-revoked" id="panel-suspended">
+      <div class="result-header">
+        <div class="result-icon">⏸</div>
+        <div>
+          <div class="result-title">Certificate Suspended</div>
+          <div class="result-subtitle">This certificate is under review</div>
+        </div>
+      </div>
+      <div class="result-body">
+        <p style="color:#fca5a5; font-size:0.95rem; line-height:1.8;">
+          This certificate has been temporarily suspended pending review by PfP Cards. Authentication is paused until the review is complete.
+        </p>
+      </div>
+    </div>
+
+    <!-- ── INVALID FORMAT / ERROR ─────────────────────────── -->
+    <div class="result-panel result-warning" id="panel-error">
+      <div class="result-header">
+        <div class="result-icon">💬</div>
+        <div>
+          <div class="result-title" id="error-title">Invalid Code</div>
+          <div class="result-subtitle" id="error-subtitle">Please check your entry and try again</div>
+        </div>
+      </div>
+      <div class="result-body">
+        <p style="color:var(--gold-dim); font-size:0.95rem; line-height:1.8;" id="error-body">
+          The code on your print should be four characters — letters and numbers only (e.g. 6C3Q).
+        </p>
+      </div>
+    </div>
+
+    <div class="footer">
+      PfP Cards &mdash; <em>The Cardigan Collector</em><br>
+      Every print is a promise. Every code, a proof.
+    </div>
+
+  </div><!-- /container -->
+
+  <script>
+    // ── CONFIG ────────────────────────────────────────────────────────────
+    // Replace with your deployed Apps Script web app URL
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyq1AQ85ctZyKWXflBEX2r7mxTdyBxJOYXSlNcDgLGotqu28buVV4YHfBmO1MOvGDc/exec";
+    // ─────────────────────────────────────────────────────────────────────
+
+    const ALL_PANELS = [
+      "panel-verified",
+      "panel-not-found",
+      "panel-not-certified",
+      "panel-revoked",
+      "panel-suspended",
+      "panel-error"
+    ];
+
+    function hideAllPanels() {
+      ALL_PANELS.forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove("visible");
+        el.style.display = "none";
+      });
+    }
+
+    function showPanel(id) {
+      hideAllPanels();
+      const el = document.getElementById(id);
+      el.style.display = "block";
+      void el.offsetWidth; // force reflow so animation replays
+      el.classList.add("visible");
+    }
+
+    function setLoading(active) {
+      document.getElementById("loadingRow").classList.toggle("active", active);
+      document.getElementById("verifyBtn").disabled = active;
+    }
+
+    function formatValue(val) {
+      const n = parseFloat(val);
+      if (isNaN(n) || !val) return "—";
+      return "$" + n.toFixed(2);
+    }
+
+    function fillVerified(data) {
+      document.getElementById("v-card").textContent        = data.cardName       || "—";
+      document.getElementById("v-artist").textContent      = data.artistName     || "—";
+      document.getElementById("v-artist-type").textContent = data.artistType     || "—";
+      document.getElementById("v-edition").textContent     = data.editionSize    || "—";
+      document.getElementById("v-edition-num").textContent = data.editionNumber  || "—";
+      document.getElementById("v-titled").textContent      = data.titled         || "—";
+      document.getElementById("v-condition").textContent   = data.printCondition || "—";
+      document.getElementById("v-value").textContent       = formatValue(data.printValue);
+      document.getElementById("v-date").textContent        = data.dateIssued     || "—";
+
+      // Signature photo — only shown when a URL is on record
+      const sigSection = document.getElementById("sig-section");
+      const sigImg     = document.getElementById("v-sig-img");
+      if (data.signaturePhotoUrl && data.signaturePhotoUrl.trim() !== "") {
+        sigImg.src             = data.signaturePhotoUrl;
+        sigSection.style.display = "block";
+      } else {
+        sigSection.style.display = "none";
+      }
+    }
+
+    async function runVerification() {
+      const input = document.getElementById("certInput");
+      const raw   = input.value.trim().toUpperCase();
+
+      if (!raw) { input.focus(); return; }
+
+      hideAllPanels();
+      setLoading(true);
+
+      try {
+        const url      = `${APPS_SCRIPT_URL}?action=verifyCert&code=${encodeURIComponent(raw)}`;
+        const response = await fetch(url);
+        const data     = await response.json();
+
+        setLoading(false);
+
+        switch (data.status) {
+          case "VERIFIED":
+            fillVerified(data);
+            showPanel("panel-verified");
+            break;
+          case "NOT_FOUND":
+            showPanel("panel-not-found");
+            break;
+          case "NOT_CERTIFIED":
+            showPanel("panel-not-certified");
+            break;
+          case "REVOKED":
+            showPanel("panel-revoked");
+            break;
+          case "SUSPENDED":
+            showPanel("panel-suspended");
+            break;
+          case "INVALID_FORMAT":
+            document.getElementById("error-title").textContent    = "Invalid Code Format";
+            document.getElementById("error-subtitle").textContent = "Please check your entry";
+            document.getElementById("error-body").textContent     = data.message || "The code on your print should be four characters (e.g. 6C3Q).";
+            showPanel("panel-error");
+            break;
+          case "SYSTEM_ERROR":
+          case "ERROR":
+          default:
+            document.getElementById("error-title").textContent    = "System Error";
+            document.getElementById("error-subtitle").textContent = "Unable to reach the registry";
+            document.getElementById("error-body").textContent     = data.message || "Verification is temporarily unavailable. Please try again shortly.";
+            showPanel("panel-error");
+            break;
+        }
+
+      } catch (err) {
+        setLoading(false);
+        document.getElementById("error-title").textContent    = "Connection Error";
+        document.getElementById("error-subtitle").textContent = "Could not reach the registry";
+        document.getElementById("error-body").textContent     = "Please check your connection and try again.";
+        showPanel("panel-error");
+        console.error("Verification error:", err);
+      }
+    }
+
+    // Enter key triggers verification
+    document.getElementById("certInput").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") runVerification();
+    });
+
+    // Strip non-alphanumeric and force uppercase as you type
+    document.getElementById("certInput").addEventListener("input", function(e) {
+      e.target.value = e.target.value.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 4);
+    });
+  </script>
+</body>
+</html>
