@@ -603,7 +603,23 @@
         <!-- Token generator for owner -->
         <div class="token-generator">
           <div class="token-generator-label">🤝 Selling or Trading This Print?</div>
-          <button class="generate-token-btn" onclick="generateToken()">Generate Share Token for Purchaser</button>
+          <p style="color:rgba(196,181,253,0.6);font-size:0.88rem;font-style:italic;margin-bottom:1rem;line-height:1.6;">
+            Enter the full 8-digit code — both the code on the print and the code on the Certificate of Authenticity — to generate a share token for the purchaser.
+          </p>
+          <div class="code-input-row" style="margin-bottom:0.75rem;">
+            <input
+              type="text"
+              id="fullCodeInput"
+              class="code-input"
+              placeholder="XXXX-XXXX"
+              maxlength="9"
+              autocomplete="off"
+              spellcheck="false"
+              style="font-size:1.2rem;letter-spacing:0.2em;"
+            />
+            <button class="generate-token-btn" style="white-space:nowrap;padding:0.85rem 1.25rem;" onclick="generateToken()">Generate Token</button>
+          </div>
+          <div id="tokenError" style="display:none;color:#f87171;font-size:0.85rem;font-style:italic;margin-bottom:0.5rem;"></div>
           <div class="token-display" id="tokenDisplay">
             <div class="token-display-label">Share this token with the purchaser — valid for 30 minutes</div>
             <div class="token-display-row">
@@ -843,24 +859,49 @@
     var lastVerifiedCode = "";
 
     async function generateToken() {
-      if (!lastVerifiedCode) return;
+      var input    = document.getElementById("fullCodeInput");
+      var errorEl  = document.getElementById("tokenError");
+      var raw      = input.value.trim().toUpperCase().replace(/[^A-Z0-9-]/g, "");
+
+      // Auto-insert hyphen if user typed 8 chars without it
+      if (raw.length === 8 && raw.indexOf("-") === -1) {
+        raw = raw.slice(0, 4) + "-" + raw.slice(4);
+        input.value = raw;
+      }
+
+      errorEl.style.display = "none";
+
+      if (raw.length !== 9 || raw.charAt(4) !== "-") {
+        errorEl.textContent = "Please enter the full code in the format XXXX-XXXX (e.g. YCLB-NZCZ).";
+        errorEl.style.display = "block";
+        input.focus();
+        return;
+      }
+
       var btn = document.querySelector(".generate-token-btn");
       btn.disabled = true;
       btn.textContent = "Generating…";
+      document.getElementById("tokenDisplay").style.display = "none";
+
       try {
-        var url  = APPS_SCRIPT_URL + "?action=generateToken&code=" + encodeURIComponent(lastVerifiedCode);
+        var url  = APPS_SCRIPT_URL + "?action=generateToken&code=" + encodeURIComponent(raw);
         var resp = await fetch(url);
         var data = await resp.json();
         if (data.success) {
-          document.getElementById("tokenCode").textContent  = data.token;
+          document.getElementById("tokenCode").textContent   = data.token;
           document.getElementById("tokenExpiry").textContent = "⏱ Expires in " + (data.expiresIn || "30 minutes");
           document.getElementById("tokenDisplay").style.display = "block";
+          errorEl.style.display = "none";
           btn.textContent = "Generate New Token";
         } else {
-          btn.textContent = "Error — Try Again";
+          errorEl.textContent = data.message || "Code not recognised. Please check both parts and try again.";
+          errorEl.style.display = "block";
+          btn.textContent = "Generate Token";
         }
       } catch (err) {
-        btn.textContent = "Error — Try Again";
+        errorEl.textContent = "Connection error — please try again.";
+        errorEl.style.display = "block";
+        btn.textContent = "Generate Token";
       }
       btn.disabled = false;
     }
@@ -932,6 +973,23 @@
 
     document.getElementById("tokenInput").addEventListener("keydown", function(e) {
       if (e.key === "Enter") redeemToken();
+    });
+
+    // Auto-format full code input with hyphen after 4th character
+    document.getElementById("fullCodeInput").addEventListener("input", function(e) {
+      var val = e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, "");
+      // Strip hyphens first, then re-insert at position 4
+      var stripped = val.replace(/-/g, "");
+      if (stripped.length > 4) {
+        val = stripped.slice(0, 4) + "-" + stripped.slice(4, 8);
+      } else {
+        val = stripped;
+      }
+      e.target.value = val;
+    });
+
+    document.getElementById("fullCodeInput").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") generateToken();
     });
 
     // Enter key triggers verification
