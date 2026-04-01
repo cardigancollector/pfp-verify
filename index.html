@@ -508,25 +508,25 @@
       </div>
     </div>
 
-    <!-- Lookup panel -->
+    <!-- Owner verification panel -->
     <div class="lookup-panel">
-      <label class="lookup-label" for="certInput">Enter Certificate Code</label>
+      <label class="lookup-label" for="certInput">🔐 Owner Verification</label>
+      <p class="hint-text" style="margin-bottom:1.25rem;">
+        Enter the full 8-digit code — the 4 digits on the print combined with the 4 digits on the Certificate of Authenticity. Only the owner can verify.
+      </p>
       <div class="code-input-row">
         <input
           type="text"
           id="certInput"
           class="code-input"
-          placeholder="XXXX"
-          maxlength="4"
+          placeholder="XXXX-XXXX"
+          maxlength="9"
           autocomplete="off"
           spellcheck="false"
+          style="letter-spacing:0.2em;"
         />
         <button class="verify-btn" id="verifyBtn" onclick="runVerification()">Verify</button>
       </div>
-      <p class="hint-text">
-        Enter the four-character code printed on your print.<br>
-        This code is unique to your specific print and cannot be transferred.
-      </p>
 
       <div class="loading-row" id="loadingRow">
         <div class="spinner"></div>
@@ -786,7 +786,13 @@
 
     async function runVerification() {
       const input = document.getElementById("certInput");
-      const raw   = input.value.trim().toUpperCase();
+      var raw = input.value.trim().toUpperCase().replace(/[^A-Z0-9-]/g, "");
+
+      // Auto-insert hyphen if typed without it
+      if (raw.length === 8 && raw.indexOf("-") === -1) {
+        raw = raw.slice(0, 4) + "-" + raw.slice(4);
+        input.value = raw;
+      }
 
       if (!raw) { input.focus(); return; }
 
@@ -992,14 +998,21 @@
       if (e.key === "Enter") generateToken();
     });
 
+    // Auto-format owner input with hyphen after 4th character
+    document.getElementById("certInput").addEventListener("input", function(e) {
+      var val = e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, "");
+      var stripped = val.replace(/-/g, "");
+      if (stripped.length > 4) {
+        val = stripped.slice(0, 4) + "-" + stripped.slice(4, 8);
+      } else {
+        val = stripped;
+      }
+      e.target.value = val;
+    });
+
     // Enter key triggers verification
     document.getElementById("certInput").addEventListener("keydown", function(e) {
       if (e.key === "Enter") runVerification();
-    });
-
-    // Strip non-alphanumeric and force uppercase as you type
-    document.getElementById("certInput").addEventListener("input", function(e) {
-      e.target.value = e.target.value.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 4);
     });
   </script>
 </body>
