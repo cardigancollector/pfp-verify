@@ -92,32 +92,6 @@
       padding: 3rem 1.5rem 4rem;
     }
 
-    /* ── Security notice ─────────────────────────────────── */
-    .security-notice {
-      background: rgba(251,191,36,0.06);
-      border: 1px solid rgba(251,191,36,0.2);
-      border-radius: 0.75rem;
-      padding: 1.1rem 1.4rem;
-      margin-bottom: 1.5rem;
-      display: flex;
-      gap: 0.85rem;
-      align-items: flex-start;
-    }
-    .security-notice-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 0.1rem; }
-    .security-notice-text {
-      font-size: 0.92rem;
-      color: var(--gold-dim);
-      line-height: 1.7;
-    }
-    .security-notice-text strong {
-      font-family: 'Cinzel', serif;
-      font-size: 0.78rem;
-      letter-spacing: 0.08em;
-      color: var(--gold);
-      display: block;
-      margin-bottom: 0.25rem;
-    }
-
     /* ── Lookup panel ────────────────────────────────────── */
     .lookup-panel {
       background: var(--dark-glass);
@@ -138,107 +112,69 @@
       display: block;
     }
 
-    /* ── Split code input ────────────────────────────────── */
-    .split-code-row {
+    .code-input-row {
       display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.75rem;
+      gap: 0.75rem;
+      align-items: stretch;
     }
 
-    .code-half {
+    .code-input {
       flex: 1;
-      padding: 1rem 0.75rem;
+      padding: 1rem 1.25rem;
       background: rgba(15,23,42,0.7);
       border: 1.5px solid var(--border-gold);
       border-radius: 0.6rem;
       color: white;
       font-family: 'Cinzel', serif;
-      font-size: 1.5rem;
-      letter-spacing: 0.3em;
+      font-size: 1.4rem;
+      letter-spacing: 0.25em;
       text-transform: uppercase;
       text-align: center;
       transition: border-color 0.2s, box-shadow 0.2s;
-      width: 0; /* flex will size it */
     }
-    .code-half::placeholder {
-      color: rgba(253,230,138,0.25);
+    .code-input::placeholder {
+      color: rgba(253,230,138,0.3);
       letter-spacing: 0.15em;
       font-size: 1.1rem;
     }
-    .code-half:focus {
+    .code-input:focus {
       outline: none;
       border-color: var(--gold);
       box-shadow: 0 0 20px rgba(251,191,36,0.2);
     }
-    .code-half.part2:focus {
-      border-color: var(--purple-soft);
-      box-shadow: 0 0 20px rgba(168,85,247,0.2);
-    }
-
-    .code-separator {
-      font-family: 'Cinzel', serif;
-      font-size: 1.8rem;
-      color: rgba(251,191,36,0.4);
-      flex-shrink: 0;
-      line-height: 1;
-      padding-bottom: 0.1rem;
-    }
 
     .verify-btn {
-      width: 100%;
-      margin-top: 0.75rem;
       padding: 1rem 1.75rem;
       background: linear-gradient(90deg, var(--purple-ui), #f59e0b);
       border: none;
       border-radius: 0.6rem;
       color: white;
       font-family: 'Cinzel', serif;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 600;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.08em;
       cursor: pointer;
       transition: opacity 0.2s, transform 0.15s;
+      white-space: nowrap;
     }
     .verify-btn:hover  { opacity: 0.9; transform: translateY(-1px); }
     .verify-btn:active { transform: translateY(0); }
     .verify-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    /* ── Code labels ─────────────────────────────────────── */
-    .code-labels {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 0.4rem;
-    }
-    .code-label {
-      flex: 1;
-      font-family: 'Cinzel', serif;
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      text-align: center;
-      padding: 0 0.75rem;
-    }
-    .code-label.part1 { color: var(--gold-dim); }
-    .code-label.part2 { color: var(--purple-pale); }
-    .code-label-sep { width: 1.5rem; flex-shrink: 0; }
-
     .hint-text {
       margin-top: 0.85rem;
-      color: rgba(196,181,253,0.45);
-      font-size: 0.88rem;
+      color: rgba(196,181,253,0.55);
+      font-size: 0.9rem;
       font-style: italic;
-      line-height: 1.6;
-      text-align: center;
+      line-height: 1.5;
     }
 
     /* ── Loading ─────────────────────────────────────────── */
     .loading-row {
       display: none;
       align-items: center;
-      justify-content: center;
       gap: 0.85rem;
-      margin-top: 1.25rem;
+      margin-top: 1.5rem;
       color: var(--gold-dim);
       font-style: italic;
       font-size: 1rem;
@@ -347,7 +283,7 @@
       margin: 1.25rem 0;
     }
 
-    /* ── Signature photo ─────────────────────────────────── */
+    /* ── Signature photo — optional ──────────────────────── */
     .sig-section { margin-top: 0.25rem; }
     .sig-label {
       font-family: 'Cinzel', serif;
@@ -385,6 +321,137 @@
       line-height: 1.6;
     }
 
+    /* ── Token generator (owner) ─────────────────────────── */
+    .token-generator {
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      border: 1.5px solid rgba(251,191,36,0.25);
+      border-radius: 0.6rem;
+      background: rgba(251,191,36,0.04);
+    }
+    .token-generator-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 0.85rem;
+    }
+    .generate-token-btn {
+      width: 100%;
+      padding: 0.85rem;
+      background: linear-gradient(90deg, #78350f, #92400e);
+      border: 1px solid rgba(251,191,36,0.4);
+      border-radius: 0.5rem;
+      color: #fcd34d;
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .generate-token-btn:hover { background: linear-gradient(90deg, #92400e, #b45309); box-shadow: 0 0 20px rgba(251,191,36,0.2); }
+    .token-display {
+      display: none;
+      margin-top: 1rem;
+      background: rgba(15,23,42,0.8);
+      border: 1.5px solid rgba(251,191,36,0.5);
+      border-radius: 0.5rem;
+      padding: 1rem 1.25rem;
+    }
+    .token-display-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      color: var(--purple-pale);
+      margin-bottom: 0.5rem;
+    }
+    .token-display-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .token-code {
+      font-family: 'Cinzel', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      flex: 1;
+    }
+    .copy-btn {
+      padding: 0.5rem 1rem;
+      background: rgba(109,40,217,0.4);
+      border: 1px solid rgba(168,85,247,0.4);
+      border-radius: 0.4rem;
+      color: var(--purple-pale);
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .copy-btn:hover { background: rgba(109,40,217,0.7); color: white; }
+    .token-expiry {
+      margin-top: 0.5rem;
+      font-size: 0.82rem;
+      color: rgba(196,181,253,0.55);
+      font-style: italic;
+    }
+
+    /* ── Token redeem (purchaser) ────────────────────────── */
+    .token-panel {
+      background: var(--dark-glass);
+      border: 1px solid rgba(251,191,36,0.2);
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(8px);
+    }
+    .token-panel-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+    .token-panel-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+    }
+    .token-panel-chevron {
+      color: var(--purple-pale);
+      font-size: 0.85rem;
+    }
+    .token-panel-body { display: none; margin-top: 1.25rem; }
+    .token-panel-body.open { display: block; }
+    .token-result-box {
+      display: none;
+      margin-top: 1.25rem;
+      padding: 1.25rem;
+      border-radius: 0.6rem;
+      border: 1.5px solid rgba(34,197,94,0.4);
+      background: rgba(15,35,20,0.7);
+      animation: fadeSlideIn 0.4s ease forwards;
+    }
+    .token-result-box.error {
+      border-color: rgba(239,68,68,0.45);
+      background: rgba(35,10,10,0.7);
+    }
+    .token-result-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.06em;
+      color: #4ade80;
+      margin-bottom: 1rem;
+    }
+    .token-result-box.error .token-result-title { color: #f87171; }
+
     /* ── Footer ──────────────────────────────────────────── */
     .footer {
       text-align: center;
@@ -407,56 +474,58 @@
 
   <div class="container">
 
-    <!-- Security notice -->
-    <div class="security-notice">
-      <div class="security-notice-icon">🔑</div>
-      <div class="security-notice-text">
-        <strong>How Authentication Works</strong>
-        The first four characters appear on your physical print — visible to anyone.
-        The second four characters appear only on your Certificate of Authenticity.
-        Only the true owner can produce both.
+    <!-- Purchaser token redeem panel -->
+    <div class="token-panel">
+      <div class="token-panel-toggle" onclick="toggleTokenPanel()">
+        <span class="token-panel-title">🤝 I Have a Share Token</span>
+        <span class="token-panel-chevron" id="tokenPanelChevron">▼</span>
+      </div>
+      <div class="token-panel-body" id="tokenPanelBody">
+        <p style="color:rgba(196,181,253,0.6);font-size:0.88rem;font-style:italic;margin-bottom:1rem;line-height:1.6;">
+          If the owner has shared a token with you, enter it below to confirm this print is authentic — no codes required.
+        </p>
+        <div class="code-input-row">
+          <input
+            type="text"
+            id="tokenInput"
+            class="code-input"
+            placeholder="TK-XXXXXX"
+            maxlength="9"
+            autocomplete="off"
+            spellcheck="false"
+            style="font-size:1.1rem;letter-spacing:0.15em;"
+          />
+          <button class="verify-btn" id="redeemBtn" onclick="redeemToken()">Confirm</button>
+        </div>
+        <div class="loading-row" id="tokenLoadingRow">
+          <div class="spinner"></div>
+          <span>Checking token&hellip;</span>
+        </div>
+        <div class="token-result-box" id="tokenResultBox">
+          <div class="token-result-title" id="tokenResultTitle"></div>
+          <div id="tokenResultDetails"></div>
+        </div>
       </div>
     </div>
 
     <!-- Lookup panel -->
     <div class="lookup-panel">
-      <label class="lookup-label">Enter Your Full Certificate Code</label>
-
-      <!-- Labels above inputs -->
-      <div class="code-labels">
-        <div class="code-label part1">On your print</div>
-        <div class="code-label-sep"></div>
-        <div class="code-label part2">On your certificate</div>
-      </div>
-
-      <!-- Split input -->
-      <div class="split-code-row">
+      <label class="lookup-label" for="certInput">Enter Certificate Code</label>
+      <div class="code-input-row">
         <input
           type="text"
-          id="codePart1"
-          class="code-half part1"
+          id="certInput"
+          class="code-input"
           placeholder="XXXX"
           maxlength="4"
           autocomplete="off"
           spellcheck="false"
         />
-        <div class="code-separator">—</div>
-        <input
-          type="text"
-          id="codePart2"
-          class="code-half part2"
-          placeholder="XXXX"
-          maxlength="4"
-          autocomplete="off"
-          spellcheck="false"
-        />
+        <button class="verify-btn" id="verifyBtn" onclick="runVerification()">Verify</button>
       </div>
-
-      <button class="verify-btn" id="verifyBtn" onclick="runVerification()">Verify Authenticity</button>
-
       <p class="hint-text">
-        Enter the code exactly as it appears on both documents.<br>
-        Letters and numbers only — no spaces required.
+        Enter the four-character code printed on your print.<br>
+        This code is unique to your specific print and cannot be transferred.
       </p>
 
       <div class="loading-row" id="loadingRow">
@@ -514,6 +583,7 @@
           </div>
         </div>
 
+        <!-- Signature photo — shown only if URL is populated in the sheet -->
         <div id="sig-section" style="display:none;">
           <div class="divider"></div>
           <div class="sig-section">
@@ -529,6 +599,21 @@
             This is an original certified print
           </div>
         </div>
+
+        <!-- Token generator for owner -->
+        <div class="token-generator">
+          <div class="token-generator-label">🤝 Selling or Trading This Print?</div>
+          <button class="generate-token-btn" onclick="generateToken()">Generate Share Token for Purchaser</button>
+          <div class="token-display" id="tokenDisplay">
+            <div class="token-display-label">Share this token with the purchaser — valid for 30 minutes</div>
+            <div class="token-display-row">
+              <div class="token-code" id="tokenCode"></div>
+              <button class="copy-btn" onclick="copyToken()">Copy</button>
+            </div>
+            <div class="token-expiry" id="tokenExpiry"></div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -543,7 +628,7 @@
       </div>
       <div class="result-body">
         <p style="color:var(--purple-pale); font-size:0.95rem; line-height:1.8;">
-          The code you entered was not found in the PfP Cards registry. Please check both parts of the code carefully and try again. If you believe this is an error, contact the issuer directly.
+          The code you entered was not found in the PfP Cards registry. Please check the code on your print and try again. If you believe this is an error, contact the issuer directly.
         </p>
       </div>
     </div>
@@ -596,7 +681,7 @@
       </div>
     </div>
 
-    <!-- ── ERROR ──────────────────────────────────────────── -->
+    <!-- ── INVALID FORMAT / ERROR ─────────────────────────── -->
     <div class="result-panel result-warning" id="panel-error">
       <div class="result-header">
         <div class="result-icon">💬</div>
@@ -607,7 +692,7 @@
       </div>
       <div class="result-body">
         <p style="color:var(--gold-dim); font-size:0.95rem; line-height:1.8;" id="error-body">
-          Both parts of the code should be four characters each — letters and numbers only (e.g. YCLB — NZCZ).
+          The code on your print should be four characters — letters and numbers only (e.g. 6C3Q).
         </p>
       </div>
     </div>
@@ -621,6 +706,7 @@
 
   <script>
     // ── CONFIG ────────────────────────────────────────────────────────────
+    // Replace with your deployed Apps Script web app URL
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyq1AQ85ctZyKWXflBEX2r7mxTdyBxJOYXSlNcDgLGotqu28buVV4YHfBmO1MOvGDc/exec";
     // ─────────────────────────────────────────────────────────────────────
 
@@ -645,7 +731,7 @@
       hideAllPanels();
       const el = document.getElementById(id);
       el.style.display = "block";
-      void el.offsetWidth;
+      void el.offsetWidth; // force reflow so animation replays
       el.classList.add("visible");
     }
 
@@ -671,10 +757,11 @@
       document.getElementById("v-value").textContent       = formatValue(data.printValue);
       document.getElementById("v-date").textContent        = data.dateIssued     || "—";
 
+      // Signature photo — only shown when a URL is on record
       const sigSection = document.getElementById("sig-section");
       const sigImg     = document.getElementById("v-sig-img");
       if (data.signaturePhotoUrl && data.signaturePhotoUrl.trim() !== "") {
-        sigImg.src = data.signaturePhotoUrl;
+        sigImg.src             = data.signaturePhotoUrl;
         sigSection.style.display = "block";
       } else {
         sigSection.style.display = "none";
@@ -682,34 +769,16 @@
     }
 
     async function runVerification() {
-      const part1 = document.getElementById("codePart1").value.trim().toUpperCase();
-      const part2 = document.getElementById("codePart2").value.trim().toUpperCase();
+      const input = document.getElementById("certInput");
+      const raw   = input.value.trim().toUpperCase();
 
-      // Validate both fields filled
-      if (!part1 || !part2) {
-        document.getElementById("error-title").textContent    = "Incomplete Code";
-        document.getElementById("error-subtitle").textContent = "Both parts are required";
-        document.getElementById("error-body").textContent     = "Please enter the four-character code from your print, and the four-character code from your Certificate of Authenticity.";
-        showPanel("panel-error");
-        return;
-      }
-
-      // Validate format
-      if (!/^[A-Z0-9]{4}$/.test(part1) || !/^[A-Z0-9]{4}$/.test(part2)) {
-        document.getElementById("error-title").textContent    = "Invalid Code Format";
-        document.getElementById("error-subtitle").textContent = "Codes must be four characters each";
-        document.getElementById("error-body").textContent     = "Each part should be exactly four letters or numbers (e.g. YCLB — NZCZ).";
-        showPanel("panel-error");
-        return;
-      }
-
-      const fullCode = `${part1}-${part2}`;
+      if (!raw) { input.focus(); return; }
 
       hideAllPanels();
       setLoading(true);
 
       try {
-        const url      = `${APPS_SCRIPT_URL}?action=verifyCert&code=${encodeURIComponent(fullCode)}`;
+        const url      = `${APPS_SCRIPT_URL}?action=verifyCert&code=${encodeURIComponent(raw)}`;
         const response = await fetch(url);
         const data     = await response.json();
 
@@ -718,6 +787,9 @@
         switch (data.status) {
           case "VERIFIED":
             fillVerified(data);
+            lastVerifiedCode = raw;
+            document.getElementById("tokenDisplay").style.display = "none";
+            document.querySelector(".generate-token-btn").textContent = "Generate Share Token for Purchaser";
             showPanel("panel-verified");
             break;
           case "NOT_FOUND":
@@ -735,7 +807,7 @@
           case "INVALID_FORMAT":
             document.getElementById("error-title").textContent    = "Invalid Code Format";
             document.getElementById("error-subtitle").textContent = "Please check your entry";
-            document.getElementById("error-body").textContent     = data.message || "Each part should be four characters (e.g. YCLB — NZCZ).";
+            document.getElementById("error-body").textContent     = data.message || "The code on your print should be four characters (e.g. 6C3Q).";
             showPanel("panel-error");
             break;
           case "SYSTEM_ERROR":
@@ -758,24 +830,118 @@
       }
     }
 
-    // Auto-advance from part1 to part2 when 4 chars entered
-    document.getElementById("codePart1").addEventListener("input", function(e) {
-      e.target.value = e.target.value.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 4);
-      if (e.target.value.length === 4) {
-        document.getElementById("codePart2").focus();
+    // ── Token panel toggle ────────────────────────────────────────────
+    function toggleTokenPanel() {
+      var body    = document.getElementById("tokenPanelBody");
+      var chevron = document.getElementById("tokenPanelChevron");
+      var open    = body.classList.contains("open");
+      body.classList.toggle("open", !open);
+      chevron.textContent = open ? "▼" : "▲";
+    }
+
+    // ── Generate token (owner) ────────────────────────────────────────
+    var lastVerifiedCode = "";
+
+    async function generateToken() {
+      if (!lastVerifiedCode) return;
+      var btn = document.querySelector(".generate-token-btn");
+      btn.disabled = true;
+      btn.textContent = "Generating…";
+      try {
+        var url  = APPS_SCRIPT_URL + "?action=generateToken&code=" + encodeURIComponent(lastVerifiedCode);
+        var resp = await fetch(url);
+        var data = await resp.json();
+        if (data.success) {
+          document.getElementById("tokenCode").textContent  = data.token;
+          document.getElementById("tokenExpiry").textContent = "⏱ Expires in " + (data.expiresIn || "30 minutes");
+          document.getElementById("tokenDisplay").style.display = "block";
+          btn.textContent = "Generate New Token";
+        } else {
+          btn.textContent = "Error — Try Again";
+        }
+      } catch (err) {
+        btn.textContent = "Error — Try Again";
       }
+      btn.disabled = false;
+    }
+
+    function copyToken() {
+      var code = document.getElementById("tokenCode").textContent;
+      navigator.clipboard.writeText(code).then(function() {
+        var btn = document.querySelector(".copy-btn");
+        btn.textContent = "Copied!";
+        setTimeout(function() { btn.textContent = "Copy"; }, 2000);
+      });
+    }
+
+    // ── Redeem token (purchaser) ──────────────────────────────────────
+    async function redeemToken() {
+      var input = document.getElementById("tokenInput");
+      var token = input.value.trim().toUpperCase();
+      if (!token) { input.focus(); return; }
+
+      var loadingRow  = document.getElementById("tokenLoadingRow");
+      var resultBox   = document.getElementById("tokenResultBox");
+      var redeemBtn   = document.getElementById("redeemBtn");
+
+      loadingRow.classList.add("active");
+      resultBox.style.display = "none";
+      redeemBtn.disabled = true;
+
+      try {
+        var url  = APPS_SCRIPT_URL + "?action=redeemToken&token=" + encodeURIComponent(token);
+        var resp = await fetch(url);
+        var data = await resp.json();
+
+        loadingRow.classList.remove("active");
+        redeemBtn.disabled = false;
+        resultBox.style.display = "block";
+
+        var titleEl   = document.getElementById("tokenResultTitle");
+        var detailEl  = document.getElementById("tokenResultDetails");
+
+        if (data.status === "VERIFIED") {
+          resultBox.classList.remove("error");
+          titleEl.textContent = "✅ Print Verified — This is an authentic PfP print";
+          detailEl.innerHTML =
+            "<div style='display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:0.75rem;'>" +
+            "<div><div style='font-family:Cinzel,serif;font-size:0.68rem;letter-spacing:0.1em;color:#c4b5fd;margin-bottom:0.2rem;'>CARD</div><div style='color:white;font-weight:600;'>" + (data.cardName || "—") + "</div></div>" +
+            "<div><div style='font-family:Cinzel,serif;font-size:0.68rem;letter-spacing:0.1em;color:#c4b5fd;margin-bottom:0.2rem;'>ARTIST</div><div style='color:white;font-weight:600;'>" + (data.artistName || "—") + "</div></div>" +
+            "<div><div style='font-family:Cinzel,serif;font-size:0.68rem;letter-spacing:0.1em;color:#c4b5fd;margin-bottom:0.2rem;'>EDITION</div><div style='color:white;font-weight:600;'>" + (data.editionNumber || "—") + " of " + (data.editionSize || "—") + "</div></div>" +
+            "<div><div style='font-family:Cinzel,serif;font-size:0.68rem;letter-spacing:0.1em;color:#c4b5fd;margin-bottom:0.2rem;'>CERTIFIED VALUE</div><div style='color:#fbbf24;font-weight:600;'>" + formatValue(data.printValue) + "</div></div>" +
+            "</div>";
+        } else if (data.status === "EXPIRED") {
+          resultBox.classList.add("error");
+          titleEl.textContent = "⏱ Token Expired";
+          detailEl.innerHTML = "<p style='color:#fca5a5;font-size:0.88rem;margin-top:0.5rem;'>This token has expired. Ask the owner to generate a new one.</p>";
+        } else {
+          resultBox.classList.add("error");
+          titleEl.textContent = "❌ Token Not Recognised";
+          detailEl.innerHTML = "<p style='color:#fca5a5;font-size:0.88rem;margin-top:0.5rem;'>This token was not found. Please check the token and try again.</p>";
+        }
+
+      } catch (err) {
+        loadingRow.classList.remove("active");
+        redeemBtn.disabled = false;
+        resultBox.style.display = "block";
+        resultBox.classList.add("error");
+        document.getElementById("tokenResultTitle").textContent = "❌ Connection Error";
+        document.getElementById("tokenResultDetails").innerHTML = "<p style='color:#fca5a5;font-size:0.88rem;margin-top:0.5rem;'>Could not reach the registry. Please check your connection.</p>";
+      }
+    }
+
+    document.getElementById("tokenInput").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") redeemToken();
     });
 
-    document.getElementById("codePart2").addEventListener("input", function(e) {
+    // Enter key triggers verification
+    document.getElementById("certInput").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") runVerification();
+    });
+
+    // Strip non-alphanumeric and force uppercase as you type
+    document.getElementById("certInput").addEventListener("input", function(e) {
       e.target.value = e.target.value.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 4);
-    });
-
-    // Enter key on either field triggers verification
-    document.getElementById("codePart1").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") runVerification();
-    });
-    document.getElementById("codePart2").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") runVerification();
     });
   </script>
 </body>
