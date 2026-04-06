@@ -983,7 +983,7 @@
 
     // Auto-format full code input with hyphen after 4th character
     document.getElementById("fullCodeInput").addEventListener("input", function(e) {
-      var val = e.target.value.toUpperCase().replace(/[^A-Za-z0-9-]/g, "");
+      var val = e.target.value.replace(/[^A-Za-z0-9-]/g, "");
       // Strip hyphens first, then re-insert at position 4
       var stripped = val.replace(/-/g, "");
       if (stripped.length > 4) {
@@ -1000,7 +1000,7 @@
 
     // Auto-format owner input with hyphen after 4th character
     document.getElementById("certInput").addEventListener("input", function(e) {
-      var val = e.target.value.toUpperCase().replace(/[^A-Za-z0-9-]/g, "");
+      var val = e.target.value.replace(/[^A-Za-z0-9-]/g, "");
       var stripped = val.replace(/-/g, "");
       if (stripped.length > 4) {
         val = stripped.slice(0, 4) + "-" + stripped.slice(4, 8);
