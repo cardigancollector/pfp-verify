@@ -786,7 +786,7 @@
 
     async function runVerification() {
       const input = document.getElementById("certInput");
-      var raw = input.value.trim().toUpperCase().replace(/[^A-Z0-9-]/g, "");
+      var raw = input.value.trim().replace(/[^A-Za-z0-9-]/g, "");
 
       // Auto-insert hyphen if typed without it
       if (raw.length === 8 && raw.indexOf("-") === -1) {
@@ -867,7 +867,7 @@
     async function generateToken() {
       var input    = document.getElementById("fullCodeInput");
       var errorEl  = document.getElementById("tokenError");
-      var raw      = input.value.trim().toUpperCase().replace(/[^A-Z0-9-]/g, "");
+      var raw = input.value.trim().replace(/[^A-Za-z0-9-]/g, "");
 
       // Auto-insert hyphen if user typed 8 chars without it
       if (raw.length === 8 && raw.indexOf("-") === -1) {
@@ -924,7 +924,7 @@
     // ── Redeem token (purchaser) ──────────────────────────────────────
     async function redeemToken() {
       var input = document.getElementById("tokenInput");
-      var token = input.value.trim().toUpperCase();
+      var token = input.value.trim();
       if (!token) { input.focus(); return; }
 
       var loadingRow  = document.getElementById("tokenLoadingRow");
@@ -983,7 +983,7 @@
 
     // Auto-format full code input with hyphen after 4th character
     document.getElementById("fullCodeInput").addEventListener("input", function(e) {
-      var val = e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, "");
+      var val = e.target.value.toUpperCase().replace(/[^A-Za-z0-9-]/g, "");
       // Strip hyphens first, then re-insert at position 4
       var stripped = val.replace(/-/g, "");
       if (stripped.length > 4) {
@@ -1000,7 +1000,7 @@
 
     // Auto-format owner input with hyphen after 4th character
     document.getElementById("certInput").addEventListener("input", function(e) {
-      var val = e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, "");
+      var val = e.target.value.toUpperCase().replace(/[^A-Za-z0-9-]/g, "");
       var stripped = val.replace(/-/g, "");
       if (stripped.length > 4) {
         val = stripped.slice(0, 4) + "-" + stripped.slice(4, 8);
