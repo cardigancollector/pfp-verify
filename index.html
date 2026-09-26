@@ -708,7 +708,7 @@
       </div>
       <div class="result-body">
         <p style="color:var(--gold-dim); font-size:0.95rem; line-height:1.8;" id="error-body">
-          The code on your print should be four characters — letters and numbers only (e.g. 6C3Q).
+          Enter the full code: the 4 characters on the print and the 4 on the Certificate of Authenticity (e.g. ABCD-EFGH).
         </p>
       </div>
     </div>
@@ -723,7 +723,7 @@
   <script>
     // ── CONFIG ────────────────────────────────────────────────────────────
     // Replace with your deployed Apps Script web app URL
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyq1AQ85ctZyKWXflBEX2r7mxTdyBxJOYXSlNcDgLGotqu28buVV4YHfBmO1MOvGDc/exec";
+    const APPS_SCRIPT_URL = "https://us-central1-pfp-system.cloudfunctions.net/pfpApi";
     // ─────────────────────────────────────────────────────────────────────
 
     const ALL_PANELS = [
@@ -829,7 +829,7 @@
           case "INVALID_FORMAT":
             document.getElementById("error-title").textContent    = "Invalid Code Format";
             document.getElementById("error-subtitle").textContent = "Please check your entry";
-            document.getElementById("error-body").textContent     = data.message || "The code on your print should be four characters (e.g. 6C3Q).";
+            document.getElementById("error-body").textContent     = data.message || "Enter the full code: the 4 characters on the print and the 4 on the Certificate of Authenticity (e.g. ABCD-EFGH).";
             showPanel("panel-error");
             break;
           case "SYSTEM_ERROR":
