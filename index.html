@@ -277,6 +277,33 @@
     }
     .detail-value.gold { color: var(--gold); }
 
+    /* ── Collection block — only on a collection print ── */
+    .collection-block {
+      margin-bottom: 1.5rem;
+      padding: 1rem 1.25rem;
+      border: 1.5px solid rgba(251,191,36,0.35);
+      border-radius: 0.6rem;
+      background: rgba(251,191,36,0.06);
+    }
+    .collection-block.broken {
+      border-color: rgba(148,163,184,0.35);
+      background: rgba(100,116,139,0.1);
+    }
+    .collection-block-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 0.85rem;
+    }
+    .collection-block.broken .collection-block-title { color: #cbd5e1; }
+    .collection-note {
+      color: #cbd5e1;
+      font-size: 0.92rem;
+      font-style: italic;
+    }
+
     .divider {
       height: 1px;
       background: var(--border-purple);
@@ -512,7 +539,7 @@
     <div class="lookup-panel">
       <label class="lookup-label" for="certInput">🔐 Owner Verification</label>
       <p class="hint-text" style="margin-bottom:1.25rem;">
-        Enter the full 8-digit code — the 4 digits on the print combined with the 4 digits on the Certificate of Authenticity. Only the owner can verify.
+        Enter the full 8-character code — the 4 characters on the print combined with the 4 on the Certificate of Authenticity. Only the owner can verify.
       </p>
       <div class="code-input-row">
         <input
@@ -583,6 +610,9 @@
           </div>
         </div>
 
+        <!-- Collection — shown only when this print stands for 2 or more different prints -->
+        <div class="collection-block" id="v-collection" style="display:none;"></div>
+
         <!-- Signature photo — shown only if URL is populated in the sheet -->
         <div id="sig-section" style="display:none;">
           <div class="divider"></div>
@@ -604,7 +634,7 @@
         <div class="token-generator">
           <div class="token-generator-label">🤝 Selling or Trading This Print?</div>
           <p style="color:rgba(196,181,253,0.6);font-size:0.88rem;font-style:italic;margin-bottom:1rem;line-height:1.6;">
-            Enter the full 8-digit code — both the code on the print and the code on the Certificate of Authenticity — to generate a share token for the purchaser.
+            Enter the full 8-character code — both the code on the print and the code on the Certificate of Authenticity — to generate a share token for the purchaser.
           </p>
           <div class="code-input-row" style="margin-bottom:0.75rem;">
             <input
@@ -759,7 +789,64 @@
     function formatValue(val) {
       const n = parseFloat(val);
       if (isNaN(n) || !val) return "—";
-      return "$" + n.toFixed(2);
+      return "$" + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    // A print is a collection when it stands for 2 to 8 different
+    // prints. The bonus only counts while the set is Complete, and it
+    // is kept separate from the certified value, never folded into it.
+    function collectionInfo(data) {
+      const count = parseInt(data.collectionPrintCount, 10) || 0;
+      if (count < 2) return null;
+      const status   = String(data.collectionStatus || "");
+      const complete = status === "Complete";
+      const bonus    = complete ? (parseFloat(data.collectionBonus) || 0) : 0;
+      return {
+        count:    count,
+        status:   status || "Not set",
+        complete: complete && bonus > 0,
+        bonus:    bonus,
+        perPrint: bonus > 0 ? bonus / count : 0,
+        total:    (parseFloat(data.printValue) || 0) + bonus
+      };
+    }
+
+    function escHtml(str) {
+      return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    }
+
+    // Small label/value pair in the same style as the token result box.
+    function tokenField(label, value, gold) {
+      return "<div><div style='font-family:Cinzel,serif;font-size:0.68rem;letter-spacing:0.1em;color:#c4b5fd;margin-bottom:0.2rem;'>" +
+             label + "</div><div style='color:" + (gold ? "#fbbf24" : "white") + ";font-weight:600;'>" +
+             escHtml(value) + "</div></div>";
+    }
+
+    function fillCollection(data) {
+      const box  = document.getElementById("v-collection");
+      const coll = collectionInfo(data);
+      if (!coll) { box.style.display = "none"; box.innerHTML = ""; return; }
+
+      box.classList.toggle("broken", !coll.complete);
+      let html = "<div class='collection-block-title'>🗂️ Collection · " + coll.count +
+                 " different prints · " + escHtml(coll.status) + "</div>";
+
+      if (coll.complete) {
+        html +=
+          "<div class='details-grid' style='margin-bottom:0;'>" +
+            "<div class='detail-item'><div class='detail-label'>Bonus Per Print</div>" +
+              "<div class='detail-value'>" + formatValue(coll.perPrint) + " × " + coll.count + "</div></div>" +
+            "<div class='detail-item'><div class='detail-label'>Collection Bonus</div>" +
+              "<div class='detail-value gold'>" + formatValue(coll.bonus) + "</div></div>" +
+            "<div class='detail-item full-width'><div class='detail-label'>Certified Value + Collection Bonus</div>" +
+              "<div class='detail-value gold'>" + formatValue(coll.total) + "</div></div>" +
+          "</div>";
+      } else {
+        html += "<div class='collection-note'>The set is not complete, so no collection bonus applies.</div>";
+      }
+
+      box.innerHTML = html;
+      box.style.display = "block";
     }
 
     function fillVerified(data) {
@@ -772,6 +859,8 @@
       document.getElementById("v-condition").textContent   = data.printCondition || "—";
       document.getElementById("v-value").textContent       = formatValue(data.printValue);
       document.getElementById("v-date").textContent        = data.dateIssued     || "—";
+
+      fillCollection(data);
 
       // Signature photo — only shown when a URL is on record
       const sigSection = document.getElementById("sig-section");
@@ -811,7 +900,7 @@
             fillVerified(data);
             lastVerifiedCode = raw;
             document.getElementById("tokenDisplay").style.display = "none";
-            document.querySelector(".generate-token-btn").textContent = "Generate Share Token for Purchaser";
+            document.querySelector(".generate-token-btn").textContent = "Generate Token";
             showPanel("panel-verified");
             break;
           case "NOT_FOUND":
@@ -921,6 +1010,21 @@
       });
     }
 
+    // Collection lines for the purchaser's token result. Empty for an
+    // ordinary print.
+    function collectionTokenFields(data) {
+      const coll = collectionInfo(data);
+      if (!coll) return "";
+      let html = tokenField("COLLECTION", coll.count + " different prints · " + coll.status, false);
+      if (coll.complete) {
+        html += tokenField("COLLECTION BONUS", formatValue(coll.bonus), true);
+        html += tokenField("VALUE + COLLECTION BONUS", formatValue(coll.total), true);
+      } else {
+        html += tokenField("COLLECTION BONUS", "None — set not complete", false);
+      }
+      return html;
+    }
+
     // ── Redeem token (purchaser) ──────────────────────────────────────
     async function redeemToken() {
       var input = document.getElementById("tokenInput");
@@ -956,6 +1060,7 @@
             "<div><div style='font-family:Cinzel,serif;font-size:0.68rem;letter-spacing:0.1em;color:#c4b5fd;margin-bottom:0.2rem;'>ARTIST</div><div style='color:white;font-weight:600;'>" + (data.artistName || "—") + "</div></div>" +
             "<div><div style='font-family:Cinzel,serif;font-size:0.68rem;letter-spacing:0.1em;color:#c4b5fd;margin-bottom:0.2rem;'>EDITION</div><div style='color:white;font-weight:600;'>" + (data.editionNumber || "—") + " of " + (data.editionSize || "—") + "</div></div>" +
             "<div><div style='font-family:Cinzel,serif;font-size:0.68rem;letter-spacing:0.1em;color:#c4b5fd;margin-bottom:0.2rem;'>CERTIFIED VALUE</div><div style='color:#fbbf24;font-weight:600;'>" + formatValue(data.printValue) + "</div></div>" +
+            collectionTokenFields(data) +
             "</div>";
         } else if (data.status === "EXPIRED") {
           resultBox.classList.add("error");
